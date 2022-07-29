@@ -13,7 +13,7 @@ export default {
       console.log("to")
       console.log(to)
 
-      if (to.path != '/login') {
+      if (to.path != '/common') {
         let obj = {
           name: to.name,
           title: to.meta.title

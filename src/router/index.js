@@ -29,7 +29,7 @@ const routes = [
 				meta: {
 					title: "个人中心"
 				},
-				component: () => import('@/views/UserCenter.vue')
+				component: () => import('@/views/common/UserCenter.vue')
 			},
 			// {
 			// 	path: '/sys/users',
@@ -50,7 +50,7 @@ const routes = [
 	},
 
 	{
-		path: '/login',
+		path: '/common',
 		name: 'Login',
 		component: () => import('@/views/Login.vue')
 	}
@@ -68,15 +68,15 @@ router.beforeEach((to, from, next) => {
 
 	let token = localStorage.getItem("token")
 
-	if (to.path == '/login') {
+	if (to.path == '/common') {
 		next()
 
 	} else if (!token) {
-		next({path: '/login'})
+		next({path: '/common'})
 
 
 	} else if(token && !hasRoute) {
-		axios.get("/sys/menu/nav", {
+		axios.get("/system/menu/nav", {
 			headers: {
 				Authorization: localStorage.getItem("token")
 			}
