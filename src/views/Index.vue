@@ -1,5 +1,5 @@
 <template>
-  <div>main</div>
+  <div>财务总报表</div>
 </template>
 
 <script>

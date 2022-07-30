@@ -32,25 +32,25 @@ const routes = [
 				component: () => import('@/views/common/UserCenter.vue')
 			},
 			// {
-			// 	path: '/sys/users',
+			// 	path: '/system/users',
 			// 	name: 'SysUser',
-			// 	component: User
+			// 	component: ()=>import('@/views/system/User')
 			// },
 			// {
-			// 	path: '/sys/roles',
+			// 	path: '/system/roles',
 			// 	name: 'SysRole',
-			// 	component: Role
+			// 	component: ()=>import('@/views/system/Role')
 			// },
 			// {
-			// 	path: '/sys/menus',
+			// 	path: '/system/menus',
 			// 	name: 'SysMenu',
-			// 	component: Menu
+			// 	component: ()=>import('@/views/system/Menu')
 			// },
 		]
 	},
 
 	{
-		path: '/common',
+		path: '/login',
 		name: 'Login',
 		component: () => import('@/views/Login.vue')
 	}
@@ -68,11 +68,11 @@ router.beforeEach((to, from, next) => {
 
 	let token = localStorage.getItem("token")
 
-	if (to.path == '/common') {
+	if (to.path === '/login') {
 		next()
 
 	} else if (!token) {
-		next({path: '/common'})
+		next({path: '/login'})
 
 
 	} else if(token && !hasRoute) {
