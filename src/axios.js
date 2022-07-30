@@ -3,6 +3,7 @@ import router from "./router";
 import Element from "element-ui"
 
 const request = axios.create({
+	baseURL: 'localhost:8888/api', // api的base_url
 	timeout: 5000,
 	headers: {
 		'Content-Type': "application/json; charset=utf-8"
