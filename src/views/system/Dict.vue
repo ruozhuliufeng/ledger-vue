@@ -12,7 +12,7 @@
                   clearable/>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDictList">搜索</el-button>
+        <el-button @click="getDictList(0)">搜索</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="addDict">新增</el-button>
@@ -88,10 +88,10 @@
         width="600px"
         :before-close="handleClose">
       <el-form ref="editForm" :model="editForm" :rules="editFormRules">
-        <el-form-item label="字典码" prop="code" label-width="100px">
+        <el-form-item label="字典码" prop="code" label-width="100px" v-if="!editForm.code">
           <el-input v-model="editForm.code" autocomplete="off"/>
         </el-form-item>
-        <el-form-item label="字典键值" prop="dictKey" label-width="100px">
+        <el-form-item label="字典键值" prop="dictKey" label-width="100px" v-if="editForm.parentId">
           <el-input v-model="editForm.dictKey" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="字典名称" prop="dictValue" label-width="100px">
@@ -160,6 +160,10 @@
             prop="code"
             label="字典码"
             width="120"/>
+        <el-table-column
+            prop="dictKey"
+            label="字典键值"
+            width="150"/>
         <el-table-column
             prop="dictValue"
             label="字典名称"
@@ -249,11 +253,11 @@ export default {
       dictDialogFormVisible: false,
       dictTableData: [],
       checkStrictly: true,
-      dictParentId: ''
+      dictParentId: 0
     }
   },
   created() {
-    this.getDictList()
+    this.getDictList(0)
   },
   methods: {
     toggleSelection(rows) {
@@ -288,14 +292,17 @@ export default {
     handleDictClose() {
       this.dictDialogFormVisible = false
     },
-    getDictList() {
+    getDictList(parentId) {
       var params = {
         dictCode: this.searchForm.dictCode,
         dictName: this.searchForm.dictName,
         current: this.current,
         size: this.size
       }
-      queryDictList(0, params).then(res => {
+      if (parentId === null){
+        parentId = this.dictParentId
+      }
+      queryDictList(parentId, params).then(res => {
         this.tableData = res.data.data.records
         this.size = res.data.data.size
         this.current = res.data.data.current
@@ -366,14 +373,16 @@ export default {
     },
     addDict() {
       this.dialogVisible = true
+      this.dictParentId = 0
+      this.editForm.parentId = 0
       this.editForm.dictKey = -1
     },
     addDictItem() {
       queryDict(this.dictParentId).then(res => {
         this.editForm.parentId = res.data.data.id
         this.editForm.code = res.data.data.code
+        this.dialogVisible = true
       })
-      this.dialogVisible = true
     }
   }
 }
