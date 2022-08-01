@@ -3,7 +3,7 @@ import router from "./router";
 import Element from "element-ui"
 
 const request = axios.create({
-	baseURL: 'localhost:8888/api', // api的base_url
+	baseURL: "/api", // api的base_url
 	timeout: 5000,
 	headers: {
 		'Content-Type': "application/json; charset=utf-8"
@@ -30,14 +30,20 @@ request.interceptors.response.use(
 		}
 	},
 	error => {
-		if (error.response.data) {
-			error.massage = error.response.data.message
+		console.log('error->'+error)
+		if (error.response){
+			if (error.response.data) {
+				error.massage = error.response.data.message
+			}
+
+			if (error.response.status === 401) {
+				router.push("/login")
+			}
+			Element.Message.error(error.massage, {duration: 3000})
+		}else {
+			Element.Message.error(error, {duration: 3000})
 		}
 
-		if (error.response.status === 401) {
-			router.push("/common")
-		}
-		Element.Message.error(error.massage, {duration: 3000})
 		return Promise.reject(error)
 	}
 )
