@@ -299,8 +299,10 @@ export default {
         current: this.current,
         size: this.size
       }
-      if (parentId === null){
+      if (parentId === null && this.dictParentId) {
         parentId = this.dictParentId
+      } else if (parentId === null && !this.dictParentId) {
+        parentId = 0
       }
       queryDictList(parentId, params).then(res => {
         this.tableData = res.data.data.records
@@ -334,8 +336,8 @@ export default {
                     }
                   })
                 })
-                this.dialogVisible = false
               }
+              this.dialogVisible = false
             } else {
               return false
             }

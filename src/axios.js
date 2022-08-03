@@ -4,7 +4,7 @@ import Element from "element-ui"
 
 const request = axios.create({
 	baseURL: "/api", // api的base_url
-	timeout: 10000,
+	timeout: 30000,
 	headers: {
 		'Content-Type': "application/json; charset=utf-8"
 	}

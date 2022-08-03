@@ -200,7 +200,7 @@ export function saveDict(params) {
 
 export function updateDict(params) {
     return request({
-        url: '/system/update/save',
+        url: '/system/dict/update',
         method: 'post',
         data: {
             ...params
