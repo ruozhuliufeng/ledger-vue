@@ -38,3 +38,10 @@ export function updatePass(params) {
         }
     })
 }
+
+export function queryReport(){
+    return request({
+        url: '/base/query/report',
+        method: 'get'
+    })
+}
