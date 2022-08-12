@@ -4,19 +4,19 @@
       <el-col :span="8">
         <dv-border-box-8>
           <label style="text-align: center">支出占比</label>
-          <dv-active-ring-chart :config="expenseRatio" style="width:400px;height:350px"/>
+          <dv-active-ring-chart :config="expenseRatio" style="width:400px;height:300px"/>
         </dv-border-box-8>
       </el-col>
       <el-col :span="8">
         <dv-border-box-3>
           <label style="text-align: center">最近收入</label>
-          <dv-scroll-ranking-board :config="recentIncome" style="width:500px;height:350px"/>
+          <dv-scroll-ranking-board :config="recentIncome" style="width:400px;height:300px"/>
         </dv-border-box-3>
       </el-col>
       <el-col :span="8">
         <dv-border-box-4>
           <label style="text-align: center">最近支出</label>
-          <dv-scroll-ranking-board :config="recentExpense" style="width:500px;height:350px"/>
+          <dv-scroll-ranking-board :config="recentExpense" style="width:400px;height:300px"/>
         </dv-border-box-4>
       </el-col>
     </el-row>
@@ -24,19 +24,19 @@
       <el-col :span="8">
         <dv-border-box-8>
           <label style="text-align: center">收入占比</label>
-          <dv-active-ring-chart :config="incomeRatio" style="width:300px;height:350px"/>
+          <dv-active-ring-chart :config="incomeRatio" style="width:400px;height:300px"/>
         </dv-border-box-8>
       </el-col>
       <el-col :span="8">
         <dv-border-box-8>
           <label style="text-align: center">其他占比</label>
-          <dv-capsule-chart :config="otherRatio" style="width:300px;height:350px"/>
+          <dv-capsule-chart :config="otherRatio" style="width:400px;height:300px"/>
         </dv-border-box-8>
       </el-col>
       <el-col :span="8">
         <dv-border-box-5>
           <label style="text-align: center">最近其他交易</label>
-          <dv-scroll-ranking-board :config="recentOther" style="width:500px;height:350px"/>
+          <dv-scroll-ranking-board :config="recentOther" style="width:400px;height:300px"/>
         </dv-border-box-5>
       </el-col>
     </el-row>
