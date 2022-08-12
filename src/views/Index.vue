@@ -52,17 +52,26 @@ export default {
   name: "Index",
   data() {
     return {
-      incomeRatio: {},
+      incomeRatio: {
+        data: []
+      },
       recentIncome: {
+        data: [],
         unit: '元',
       },
-      expenseRatio: {},
-      recentExpense: {
-        unit: '元'
+      expenseRatio: {
+        data: []
       },
-      otherRatio: {},
+      recentExpense: {
+        unit: '元',
+        data: []
+      },
+      otherRatio: {
+        data: []
+      },
       recentOther: {
         unit: '元',
+        data: []
       },
     }
   },
@@ -73,11 +82,17 @@ export default {
     queryReportList() {
       queryReport().then(res => {
         this.incomeRatio.data = res.data.data.incomeRatioList
+        this.incomeRatio = {...this.incomeRatio}
         this.expenseRatio.data = res.data.data.expenseRatioList
+        this.expenseRatio = {...this.expenseRatio}
         this.otherRatio.data = res.data.data.otherRatioList
+        this.otherRatio = {...this.otherRatio}
         this.recentIncome.data = res.data.data.recentIncomeList
+        this.recentIncome = {...this.recentIncome}
         this.recentExpense.data = res.data.data.recentExpenseList
+        this.recentExpense = {...this.recentExpense}
         this.recentOther.data = res.data.data.recentOtherList
+        this.recentOther = {...this.recentOther}
       })
     }
   }
