@@ -1,29 +1,42 @@
 <template>
   <div>
     <el-form :inline="true">
-      <el-form-item>
+      <el-form-item label="角色名称">
         <el-input v-model="searchForm.name"
                   placeholder="角色名称"
                   clearable/>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getRoleList">搜索</el-button>
-      </el-form-item>
-      <el-form-item>
-        <!--      <el-button type="primary" -->
-        <!--                 @click="dialogVisible=true"-->
-        <!--                 v-if="hasAuth('system:user:save')"-->
-        <!--      >新增</el-button>-->
-        <el-button type="primary" @click="dialogVisible=true">新增</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-popconfirm title="确定删除吗" @confirm="delHandle(null)">
-          <el-button type="danger" slot="reference" :disabled="delBelStatu">
-            批量删除
-          </el-button>
-        </el-popconfirm>
+        <el-button
+            type="primary"
+            size="mini"
+            plain
+            icon="el-icon-search"
+            @click="getRoleList">搜索</el-button>
       </el-form-item>
     </el-form>
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="dialogVisible=true">
+          新增
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+            @click="delHandle">
+          批量删除
+        </el-button>
+      </el-col>
+    </el-row>
     <el-table
         ref="multipleTable"
         :data="tableData"

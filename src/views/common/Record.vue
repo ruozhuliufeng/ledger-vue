@@ -1,31 +1,59 @@
 <template>
   <div>
-    <el-form :inline="true">
-      <el-form-item>
+    <el-form :inline="true" :model="searchForm" ref="searchForm" size="small" v-show="showSearch">
+      <el-form-item label="交易单号" prop="name">
         <el-input v-model="searchForm.name"
-                  placeholder="角色名称"
+                  placeholder="请输入交易单号"
                   clearable/>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getRecordList">搜索</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="simpleRecord">简单记一笔</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="record">记一笔</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="uploadFormVisible = true">导入微信/支付宝账单</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-popconfirm title="确定删除吗" @confirm="delHandle(null)">
-          <el-button type="danger" slot="reference" :disabled="delBelStatu">
-            批量删除
-          </el-button>
-        </el-popconfirm>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="getRecordList">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="simpleRecord">
+          简单记一笔
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="record">
+          记一笔
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="uploadFormVisible = true">
+          导入微信/支付宝账单
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="danger"
+                   plain
+                   icon="el-icon-delete"
+                   size="mini"
+                   @click="delHandle">
+          批量删除
+        </el-button>
+      </el-col>
+<!--      <right-tool-bar :show-search.sync="showSearch" @queryTable="getRecordList"></right-tool-bar>-->
+    </el-row>
+
     <el-table
         ref="multipleTable"
         :data="tableData"
@@ -179,30 +207,32 @@
     </el-dialog>
     <!-- 上传对话框 -->
     <el-dialog
-        title="交易记录信息"
+        title="支付宝/微信账单文件导入"
         :visible.sync="uploadFormVisible"
         width="600px"
         :before-close="handleClose">
-      <el-form ref="uploadForm" :model="uploadForm">
-        <el-form-item label="支付宝/微信账单文件" prop="file" label-width="150px">
-          <el-upload
-              class="upload-demo"
-              :multiple="false"
-              :show-file-list="true"
-              accept='.csv,.zip'
-              action="#"
-              :on-change='onChange'
-              :file-list="fileList"
-              :auto-upload="false">
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传csv/zip文件，上传压缩文件请输入解压密码</div>
-          </el-upload>
-        </el-form-item>
-
-        <el-form-item label="解压密码" prop="password" label-width="150px">
-          <el-input v-model="uploadForm.password" autocomplete="off"/>
-        </el-form-item>
-      </el-form>
+      <el-upload
+          ref="uploadForm"
+          class="upload-demo"
+          :multiple="false"
+          :show-file-list="true"
+          :headers="uploadForm.headers"
+          accept='.csv,.zip'
+          :action="uploadForm.uploadUrl + '?password='+uploadForm.password"
+          :disabled="uploadForm.isUploading"
+          :on-progress="handleFileUploadProgress"
+          :on-success="handleFileSuccess"
+          :file-list="fileList"
+          :auto-upload="false">
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div class="el-upload__tip text-center" slot="tip">
+          <div class="el-upload__tip" slot="tip">
+            压缩包解压密码:
+            <el-input v-model="uploadForm.password" autocomplete="off"/>
+          </div>
+          <span>只能上传csv/zip文件，上传压缩文件请输入解压密码</span>
+        </div>
+      </el-upload>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitUploadForm()">确定</el-button>
         <el-button @click="resetForm('uploadForm')">取消</el-button>
@@ -231,12 +261,14 @@ export default {
       delBelStatu: true,
       total: 0,
       size: 10,
+      ids: [],
       current: 1,
       dialogVisible: false,
       editForm: {},
       tableData: [],
       categoryData: [],
       isSimpleRecord: 0,
+      showSearch: true,
       editFormRules: {
         transactionType: [
           {required: true, message: '请选择交易类型', trigger: 'blur'}
@@ -247,7 +279,13 @@ export default {
       },
       multipleSelection: [],
       uploadFormVisible: false,
-      uploadForm: {},
+      uploadForm: {
+        files: [],
+        uploadUrl: '/api/record/import/third/record',
+        password: '',
+        headers: {Authorization: localStorage.getItem("token")},
+        isUploading: false
+      },
       fileList: []
     }
   },
@@ -267,15 +305,17 @@ export default {
     },
     handleSelecionChange(val) {
       this.multipleSelection = val
+      this.ids = val.map(item => item.id)
       this.delBelStatu = val.length === 0
     },
     handleSizeChange(val) {
       this.size = val
-      this.getUserList()
+      this.getRecordList()
     },
     handleCurrentChange(val) {
       this.current = val
-      this.getUserList()
+      console.log("当前页：" + val)
+      this.getRecordList()
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
@@ -288,8 +328,23 @@ export default {
       this.resetForm('editForm')
       this.resetForm('uploadForm')
     },
-    getRecordCategoryList(){
-      queryRecordCategoryList().then(res=>{
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.uploadForm.isUploading = true;
+    },
+    resetQuery() {
+      this.resetForm('searchForm')
+      this.getRecordList()
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.uploadFormVisible = false;
+      this.uploadForm.isUploading = false;
+      this.$refs.uploadForm.clearFiles();
+      this.getRecordList();
+    },
+    getRecordCategoryList() {
+      queryRecordCategoryList().then(res => {
         this.categoryData = res.data.data
       })
     },
@@ -348,15 +403,10 @@ export default {
       })
     },
     delHandle(id) {
-      var ids = []
       if (id) {
-        ids.push(id)
-      } else {
-        this.multipleSelection.forEach(row => {
-          ids.push(row.id)
-        })
+        this.ids.push(id)
       }
-      deleteRecordList(ids).then(res => {
+      deleteRecordList(this.ids).then(res => {
         this.$message({
           showClose: true,
           message: res.data.message,
@@ -365,21 +415,6 @@ export default {
             this.getRoleList()
           }
         })
-      })
-    },
-    submitMenuHandle(formName) {
-      var menuIds = this.$refs.menuForm.getCheckedKeys()
-      grantRoleMenu(this.roleForm.id, menuIds).then(res => {
-        this.$message({
-          showClose: true,
-          message: res.data.message,
-          type: 'success',
-          onclose: () => {
-            this.getUserList()
-          }
-        })
-        this.menuDialogFormVisible = false
-        this.resetForm(formName)
       })
     },
     formatterTime(value) {
@@ -395,23 +430,35 @@ export default {
     },
     onChange(a, fileList) {
       this.uploadForm.files = fileList
-      console.log("文件列表:" + fileList)
     },
     submitUploadForm() {
-      console.log("上传文件参数：" + this.uploadForm)
-      importThirdRecordList(this.uploadForm).then(res => {
-        this.$message({
-          showClose: true,
-          message: res.data.message,
-          type: 'success',
-          onclose: () => {
-            this.getUserList()
-          }
-        })
-        this.uploadFormVisible = false
-        this.resetForm('uploadForm')
-        this.getRecordList()
-      })
+      this.$refs.uploadForm.submit()
+      // const params = new FormData();
+      // const uploadFiles = [];
+      // if (!this.uploadForm.files) {
+      //   this.$message({
+      //     showClose: true,
+      //     message: "请先选择[浏览文件]后点击上传"
+      //   })
+      // }
+      // this.uploadForm.files.forEach(item => {
+      //   uploadFiles.push(item.raw)
+      // })
+      // params.append("password", this.uploadForm.password)
+      // params.append("file", uploadFiles)
+      // importThirdRecordList(params).then(res => {
+      //   this.$message({
+      //     showClose: true,
+      //     message: res.data.message,
+      //     type: 'success',
+      //     onclose: () => {
+      //       this.getRecordList()
+      //     }
+      //   })
+      //   this.uploadFormVisible = false
+      //   this.resetForm('uploadForm')
+      //   this.getRecordList()
+      // })
     }
   }
 }

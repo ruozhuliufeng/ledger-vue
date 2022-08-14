@@ -1,8 +1,13 @@
 <template>
   <div>
-    <el-form :inline="true">
+    <el-form :inline="true" size="mini">
       <el-form-item>
-        <el-button type="primary" @click="dialogVisible = true">新增</el-button>
+        <el-button
+            type="primary"
+            size="mini"
+            plain
+            icon="el-icon-plus"
+            @click="dialogVisible = true">新增</el-button>
       </el-form-item>
     </el-form>
     <el-table

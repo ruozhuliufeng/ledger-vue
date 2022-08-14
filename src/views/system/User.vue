@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :inline="true">
+    <el-form :inline="true" :model="searchForm" ref="searchForm" size="small" v-show="showSearch">
       <el-form-item>
         <el-input v-model="searchForm.username"
                   placeholder="账号"
@@ -9,21 +9,29 @@
       <el-form-item>
         <el-button @click="getUserList">搜索</el-button>
       </el-form-item>
-      <el-form-item>
-        <!--      <el-button type="primary" -->
-        <!--                 @click="dialogVisible=true"-->
-        <!--                 v-if="hasAuth('system:user:save')"-->
-        <!--      >新增</el-button>-->
-        <el-button type="primary" @click="dialogVisible=true">新增</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-popconfirm title="确定删除吗" @confirm="delHandle(null)">
-          <el-button type="danger" slot="reference" :disabled="delBelStatu">
-            批量删除
-          </el-button>
-        </el-popconfirm>
-      </el-form-item>
     </el-form>
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="dialogVisible=true">
+          新增
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+            @click="delHandle">
+          批量删除
+        </el-button>
+      </el-col>
+    </el-row>
     <el-table
         ref="multipleTable"
         :data="tableData"

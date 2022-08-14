@@ -7,6 +7,11 @@ import dataV from '@jiaminghi/data-view'
 import "element-ui/lib/theme-chalk/index.css"
 import request from "@/axios";
 import global from './globalFun'
+import RightToolBar from "@/views/components/RightToolBar";
+
+// 全局组件挂载
+Vue.component("RightToolBar",RightToolBar)
+
 
 Vue.use(dataV)
 Vue.use(Element)
