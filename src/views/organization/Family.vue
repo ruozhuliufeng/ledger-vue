@@ -14,12 +14,30 @@
     </el-tooltip>
   </span>
   </el-dialog>
+    <el-dialog
+      :visible.sync="createFamilyVisible"
+      title="编辑家庭信息"
+      width="30%"
+      >
+      <el-form :model="editForm" ref="editForm" >
+        <el-form-item label="家庭名称" prop="tissueName" label-width="100px" required>
+          <el-input v-model="editForm.tissueName" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="家庭描述" prop="tissueDescription" label-width="100px">
+          <el-input v-model="editForm.tissueDescription" autocomplete="off"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('editForm')">确定</el-button>
+        <el-button @click="resetForm('editForm')">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import router from "@/router";
-
+import {createFamily,updateFamily,updateFamilyUser,deleteFamily,deleteFamilyUser,queryFamilyList,queryFamilyUser} from "@/api/tissue";
 export default {
   name: "Family",
   data() {
@@ -29,6 +47,12 @@ export default {
       createFamilyVisible: false,
       joinFamilyVisible: false,
       editForm: {},
+      editFormRules: {
+        tissueName: [
+          {required: true, message: '家庭名称不能为空', trigger: 'blur'}
+        ],
+      },
+      familyData:{},
     }
   },
   created() {
@@ -50,7 +74,26 @@ export default {
     handleJoinFamily(){
       this.joinFamilyVisible = true
       this.infoDialogVisible = false
-    }
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+            if (valid) {
+              if (this.editForm.id) {
+                updateFamily(this.editForm).then(res => {
+                  this.$modal.msgSuccess(res.data.message)
+                })
+              } else {
+                createFamily(this.editForm).then(res => {
+                  this.$modal.msgSuccess(res.data.message)
+                })
+                this.createFamilyVisible = false
+              }
+            } else {
+              return false
+            }
+          }
+      )
+    },
   }
 }
 </script>

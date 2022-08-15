@@ -77,6 +77,16 @@ export function uploadUserAvatar(params) {
     })
 }
 
+export function queryUserPhone(params){
+    return request({
+        url: '/system/user/query/user/phone',
+        method: 'post',
+        data: {
+            ...params
+        }
+    })
+}
+
 export function queryRoleList(params) {
     return request({
         url: '/system/role/list',
