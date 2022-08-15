@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :inline="true">
+    <el-form :inline="true" size="mini">
       <el-form-item label="角色名称">
         <el-input v-model="searchForm.name"
                   placeholder="角色名称"
