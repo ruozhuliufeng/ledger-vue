@@ -1,12 +1,15 @@
 import request from "@/axios";
 
-export function queryFamilyUser(params) {
+export function queryFamilyUser(id) {
     return request({
-        url: '/tissue/family/query/user',
-        method: 'get',
-        data: {
-            ...params
-        }
+        url: '/tissue/family/query/user/'+id,
+        method: 'get'
+    })
+}
+export function queryFamily() {
+    return request({
+        url: '/tissue/family/query',
+        method: 'get'
     })
 }
 
