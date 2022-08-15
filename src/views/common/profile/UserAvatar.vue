@@ -56,6 +56,7 @@
 
 <script>
 import {VueCropper} from "vue-cropper";
+import {uploadUserAvatar} from "@/api/system";
 // import { uploadAvatar } from "@/api/system/user";
 
 export default {
@@ -81,7 +82,7 @@ export default {
         autoCropHeight: 200, // 默认生成截图框高度
         fixedBox: true // 固定截图框大小 不允许改变
       },
-      previews: {}
+      previews: {},
     };
   },
   methods: {
@@ -125,13 +126,14 @@ export default {
     uploadImg() {
       this.$refs.cropper.getCropBlob(data => {
         let formData = new FormData();
-        formData.append("avatarfile", data);
-        // uploadAvatar(formData).then(response => {
-        //   this.open = false;
-        //   this.options.img = process.env.VUE_APP_BASE_API + response.imgUrl;
-        //   this.$modal.msgSuccess("修改成功");
-        //   this.visible = false;
-        // });
+        formData.append("avatarFile", data);
+        uploadUserAvatar(formData).then(res => {
+          this.options.img = res.data.data
+          this.user.avatar = res.data.data
+          this.open = false;
+          this.$modal.msgSuccess("修改成功");
+          this.visible = false;
+        });
       });
     },
     // 实时预览
@@ -141,6 +143,7 @@ export default {
     // 关闭窗口
     closeDialog() {
       this.visible = false;
+      this.user.avatar = res.data.data
     }
   }
 };

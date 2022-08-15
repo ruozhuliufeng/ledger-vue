@@ -69,6 +69,13 @@ export function grantUserRole(id, params) {
     })
 }
 
+export function uploadUserAvatar(params) {
+    return request({
+        url: '/system/user/upload/avatar',
+        method: 'post',
+        data: params
+    })
+}
 
 export function queryRoleList(params) {
     return request({
