@@ -110,11 +110,7 @@ router.beforeEach((to, from, next) => {
 					})
 				}
 			})
-
-			console.log("newRoutes")
-			console.log(newRoutes)
 			router.addRoutes(newRoutes)
-
 			hasRoute = true
 			store.commit("changeRouteStatus", hasRoute)
 		})

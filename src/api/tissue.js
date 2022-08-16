@@ -51,13 +51,10 @@ export function queryFamilyList(params) {
 }
 
 
-export function deleteFamilyUser(params){
+export function deleteFamilyUser(id){
     return request({
-        url: '/tissue/family/delete/user/list',
-        method: 'post',
-        data: {
-            ...params
-        }
+        url: '/tissue/family/delete/user/'+id,
+        method: 'put'
     })
 }
 

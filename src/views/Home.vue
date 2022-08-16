@@ -31,7 +31,7 @@
         </div>
       </el-main>
       <el-footer>
-        网站信息
+        Copyright © 2022 若竹流风 - All rights reserved 联系我们：ruozhuliufeng@aixuxi.cn
       </el-footer>
     </el-container>
   </el-container>
@@ -96,9 +96,15 @@ export default {
   cursor: pointer;
 }
 
-.el-header ,.el-footer{
+.el-header{
   background-color: #17B3A3;
   color: #333;
+  text-align: center;
+  line-height: 60px;
+}
+.el-footer{
+  background-color: #030409;
+  color: #ebeef5;
   text-align: center;
   line-height: 60px;
 }
