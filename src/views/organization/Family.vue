@@ -65,7 +65,7 @@
         width="30%"
         :before-close="handleCloseJoin"
     >
-      <el-form ref="searchForm" :inline="true"  size="mini" :model="searchForm">
+      <el-form ref="searchForm" :inline="true" size="mini" :model="searchForm">
         <el-form-item label="名称" prop="name" label-width="40px">
           <el-input v-model="searchForm.name" autocomplete="off"/>
         </el-form-item>
@@ -96,10 +96,10 @@
             property="tissueDescription"
             label="描述"/>
       </el-table>
-      <el-button style="float: right; padding: 5px 0" type="success"  @click="joinFamily">申请加入</el-button>
+      <el-button style="float: right; padding: 5px 0" type="success" @click="joinFamily">申请加入</el-button>
     </el-dialog>
     <el-row :gutter="20">
-      <el-col :span="8" :xs="24">
+      <el-col :span="10" :xs="24">
         归属家庭：<span style="color: #3a8ee6">{{ editForm.tissueName }}</span>
         <el-button style="float: right; padding: 4px 0" mini type="text" @click="addFamilyUser">
           新增成员
@@ -140,9 +140,123 @@
         </el-table>
         <!-- TODO 循环展示设定目标 -->
       </el-col>
-      <el-col :span="16" :xs="24">
-        <!-- TODO 家庭交易记录 -->
-        <h1>{{ editForm.id }}</h1>
+      <el-col :span="14" :xs="24">
+        <el-form :inline="true" :model="recordSearchForm" ref="recordSearchForm" size="small">
+          <el-form-item label="家庭成员" prop="userIdList">
+            <el-select
+                v-model="recordSearchForm.userIdList"
+                filterable
+                allow-create
+                multiple
+                disabled
+                style="margin-left: 20px"
+                collapse-tags
+                default-first-option
+                placeholder="请选择家庭成员">
+              <template v-for="item in categoryData">
+                <el-option :label="item" :value="item"></el-option>
+              </template>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="交易分类" prop="transactionCategoryList">
+            <el-select
+                v-model="recordSearchForm.transactionCategoryList"
+                filterable
+                multiple
+                style="margin-left: 20px"
+                collapse-tags
+                default-first-option
+                placeholder="请输入或选择交易分类">
+              <template v-for="item in categoryData">
+                <el-option :label="item" :value="item"></el-option>
+              </template>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="交易类型" prop="transactionType">
+            <el-select
+                v-model="recordSearchForm.transactionType"
+                filterable
+                style="margin-left: 20px"
+                collapse-tags
+                default-first-option
+                placeholder="请输选择交易类型">
+                <el-option label="收入" value=0></el-option>
+                <el-option label="支出" value=1></el-option>
+                <el-option label="其他" value=2></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="交易时间" prop="selectDate">
+            <div class="block">
+              <el-date-picker
+                  v-model="recordSearchForm.selectDate"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  style="width: 300px"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  :picker-options="pickerOptions">
+              </el-date-picker>
+            </div>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="queryFamilyRecordList()">搜索</el-button>
+          </el-form-item>
+        </el-form>
+        <el-table
+            ref="multipleTable"
+            :data="familyRecordTable"
+            tooltip-effect="dark"
+            style="width:100%"
+            height="400"
+            border
+            show-summary
+            stripe
+        >
+          <el-table-column
+              prop="userName"
+              label="家庭成员"
+              width="120"/>
+          <el-table-column
+              prop="transactionTime"
+              type="date"
+              label="交易时间">
+            <template v-slot="scope">
+              {{ formatterTime(scope.row.transactionTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+              prop="productName"
+              label="商品名称"/>
+          <el-table-column
+              prop="transactionType"
+              label="交易类型">
+            <template v-slot="scope">
+              <el-tag size="small" v-if="scope.row.transactionType===0" type="success">收入</el-tag>
+              <el-tag size="small" v-if="scope.row.transactionType===1" type="danger">支出</el-tag>
+              <el-tag size="small" v-else-if="scope.row.transactionType===2" type="text">其他</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+              prop="amount"
+              label="交易金额"/>
+          <el-table-column
+              prop="transactionCategory"
+              label="交易分类"/>
+          <el-table-column
+              prop="remark"
+              label="交易描述"/>
+        </el-table>
+        <el-pagination
+            @size-change="handleRecordSizeChange"
+            @current-change="handleRecordCurrentChange"
+            layout="total, sizes, prev, pager, next, jumper"
+            :page-sizes="[10, 20, 50, 100]"
+            :total="total"
+            :current-page="current"
+            :page-size="size"
+        />
       </el-col>
     </el-row>
   </div>
@@ -158,8 +272,11 @@ import {
   deleteFamily,
   deleteFamilyUser,
   queryFamilyList,
-  queryFamilyUser
+  queryFamilyUser,
+  queryFamilyRecord
 } from "@/api/tissue";
+import moment from "moment";
+import {queryRecordCategoryList} from "../../api/record";
 
 export default {
   name: "Family",
@@ -169,6 +286,9 @@ export default {
       editFormVisible: false,
       createFamilyVisible: false,
       joinFamilyVisible: false,
+      total: 0,
+      size: 10,
+      current: 1,
       editForm: {
         id: '',
         tissueName: '',
@@ -181,16 +301,47 @@ export default {
         ],
       },
       searchForm: {},
+      recordSearchForm: {},
+      familyRecordTable: [],
+      categoryData:[],
       familyUserTable: [],
       familyUserForm: {},
       familyTable: [],
       familyUserFormVisible: false,
-      familyUserVisible:false,
+      familyUserVisible: false,
       currentRow: '',
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
+      },
     }
   },
   created() {
     this.queryFamily()
+    this.getRecordCategoryList()
   },
   methods: {
     handleClose(done) {
@@ -205,7 +356,7 @@ export default {
       this.createFamilyVisible = true
       this.infoDialogVisible = false
     },
-    handleCloseJoin(){
+    handleCloseJoin() {
       this.joinFamilyVisible = false
       this.infoDialogVisible = true
       this.resetForm('searchForm')
@@ -222,6 +373,14 @@ export default {
       this.joinFamilyVisible = false
       this.familyUserFormVisible = false
     },
+    handleRecordSizeChange(val) {
+      this.size = val
+      this.queryFamilyRecordList(this.editForm.id)
+    },
+    handleRecordCurrentChange(val) {
+      this.current = val
+      this.queryFamilyRecordList(this.editForm.id)
+    },
     // 家庭信息查询
     queryFamily() {
       queryFamily().then(res => {
@@ -232,6 +391,7 @@ export default {
           queryFamilyUser(this.editForm.id).then(res => {
             this.familyUserTable = res.data.data
           })
+          this.queryFamilyRecordList()
         }
       })
     },
@@ -290,7 +450,7 @@ export default {
     },
     // 家庭列表选取
     queryFamilyList() {
-      queryFamilyList(this.searchForm).then(res=>{
+      queryFamilyList(this.searchForm).then(res => {
         this.familyTable = res.data.data.records
       })
     },
@@ -299,17 +459,44 @@ export default {
       this.currentRow = val;
     },
     // 提交申请
-    joinFamily(){
-      if (!this.currentRow){
+    joinFamily() {
+      if (!this.currentRow) {
         this.$modal.alertWarning("未选择家庭，请重试")
       }
 
     },
     // 新增家庭成员
-    addFamilyUser(){
+    addFamilyUser() {
       this.familyUserVisible = true
-
-    }
+    },
+    // 家庭收支记录
+    queryFamilyRecordList() {
+      if (this.recordSearchForm.selectDate){
+        this.recordSearchForm.transactionStartTime = this.recordSearchForm.selectDate[0]
+        this.recordSearchForm.transactionEndTime = this.recordSearchForm.selectDate[1]
+      }
+      var queryParams = {
+        ...this.recordSearchForm,
+        tissueId: this.editForm.id,
+        current: this.current,
+        size: this.size
+      }
+      queryFamilyRecord(queryParams).then(res => {
+        this.familyRecordTable = res.data.data.records
+        this.size = res.data.data.size
+        this.current = res.data.data.current
+        this.total = res.data.data.total
+      })
+    },
+    formatterTime(value) {
+      return moment(value).format('YYYY-MM-DD');
+    },
+    // 交易分类记录
+    getRecordCategoryList() {
+      queryRecordCategoryList().then(res => {
+        this.categoryData = res.data.data
+      })
+    },
   }
 }
 </script>

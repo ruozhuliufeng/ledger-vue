@@ -67,3 +67,12 @@ export function updateFamilyUser(params){
         }
     })
 }
+export function queryFamilyRecord(params){
+    return request({
+        url: '/tissue/family/query/record',
+        method: 'post',
+        data: {
+            ...params
+        }
+    })
+}
