@@ -2,10 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Index from '../views/Index.vue'
-
 import axios from "../axios";
 import store from "../store"
-import el from "element-ui/src/locale/lang/el";
 
 Vue.use(VueRouter)
 
@@ -31,21 +29,6 @@ const routes = [
 				},
 				component: () => import('@/views/common/UserCenter.vue')
 			},
-			// {
-			// 	path: '/system/users',
-			// 	name: 'SysUser',
-			// 	component: ()=>import('@/views/system/User')
-			// },
-			// {
-			// 	path: '/system/roles',
-			// 	name: 'SysRole',
-			// 	component: ()=>import('@/views/system/Role')
-			// },
-			// {
-			// 	path: '/system/menus',
-			// 	name: 'SysMenu',
-			// 	component: ()=>import('@/views/system/Menu')
-			// },
 		]
 	},
 
@@ -81,17 +64,10 @@ router.beforeEach((to, from, next) => {
 				Authorization: localStorage.getItem("token")
 			}
 		}).then(res => {
-
-			console.log(res.data.data)
-
 			// 拿到menuList
 			store.commit("setMenuList", res.data.data.nav)
-
 			// 拿到用户权限
 			store.commit("setPermList", res.data.data.authoritys)
-
-			console.log(store.state.menus.menuList)
-
 			// 动态绑定路由
 			let newRoutes = router.options.routes
 
@@ -113,6 +89,15 @@ router.beforeEach((to, from, next) => {
 			router.addRoutes(newRoutes)
 			hasRoute = true
 			store.commit("changeRouteStatus", hasRoute)
+		})
+	} else if (token){
+		// 更新未读数量
+		axios.get('/system/message/query/wait/message/num',{
+			headers: {
+				Authorization: localStorage.getItem("token")
+			}
+		}).then(res=>{
+			store.commit("SET_WAIT_MSG_NUM",res.data.data)
 		})
 	}
 

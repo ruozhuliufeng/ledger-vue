@@ -213,6 +213,7 @@ export default {
         children: 'children',
         label: 'roleName'
       },
+      showSearch:false,
       roleForm: {},
       roleTreeData: [],
       treeCheckedKeys: [],

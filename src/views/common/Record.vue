@@ -314,7 +314,6 @@ export default {
     },
     handleCurrentChange(val) {
       this.current = val
-      console.log("当前页：" + val)
       this.getRecordList()
     },
     resetForm(formName) {

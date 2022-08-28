@@ -17,11 +17,7 @@ request.interceptors.request.use(config => {
 
 request.interceptors.response.use(
 	response => {
-
-		console.log("response ->" + response)
-
 		let res = response.data
-
 		if (res.code === 200) {
 			return response
 		} else {
@@ -30,7 +26,6 @@ request.interceptors.response.use(
 		}
 	},
 	error => {
-		console.log('error->'+error)
 		if (error.response){
 			if (error.response.data) {
 				error.massage = error.response.data.message

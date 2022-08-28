@@ -189,7 +189,6 @@ export default {
   methods: {
     getMenuTree() {
       getMenuTree().then(res => {
-        console.log(res.data.data)
         this.tableData = res.data.data
       })
     },

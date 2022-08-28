@@ -43,7 +43,8 @@
             <li class="list-group-item">
               <svg-icon icon-class="date"/>
               创建日期
-              <div class="pull-right">{{ userInfo.createTime }}</div>
+              <div class="pull-right">
+                {{formatterTime(userInfo.createTime)}}</div>
             </li>
           </ul>
         </el-card>
@@ -60,6 +61,9 @@
             <el-tab-pane label="修改密码" name="resetPws">
               <reset-pwd :user="userInfo"/>
             </el-tab-pane>
+            <el-tab-pane label="第三方系统关联" name="userOauth">
+              <user-oauth :user="userInfo"/>
+            </el-tab-pane>
           </el-tabs>
         </el-card>
       </el-col>
@@ -72,10 +76,11 @@ import {getUserInfo, updatePass} from "@/api/common";
 import UserAvatar from "@/views/common/profile/UserAvatar";
 import UserInfo from "@/views/common/profile/UserInfo";
 import ResetPwd from "@/views/common/profile/ResetPwd";
+import UserOauth from "@/views/common/profile/UserOauth";
 
 export default {
   name: "UserCenter",
-  components: {ResetPwd, UserInfo, UserAvatar},
+  components: {UserOauth, ResetPwd, UserInfo, UserAvatar},
   data() {
     return {
       userInfo: {},
@@ -90,6 +95,9 @@ export default {
       getUserInfo().then(res => {
         this.userInfo = res.data.data
       })
+    },
+    formatterTime(value){
+      return this.$moment(value).format('YYYY-MM-DD');
     }
   }
 }

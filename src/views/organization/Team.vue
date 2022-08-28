@@ -47,10 +47,14 @@ export default {
     handleCreateTeam(){
       this.createTeamVisible = true
       this.infoDialogVisible = false
+      this.$modal.msgWarning("团队功能正在开发中")
+      router.push("/index")
     },
     handleJoinTeam(){
       this.joinTeamVisible = true
       this.infoDialogVisible = false
+      this.$modal.msgWarning("团队功能正在开发中")
+      router.push("/index")
     }
   }
 }
