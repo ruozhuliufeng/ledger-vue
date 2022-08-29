@@ -152,6 +152,11 @@
         <!-- TODO 循环展示设定目标 -->
 
         <!-- TODO 底部展示家庭累计收入与支出，累计金额等信息 -->
+        <div class="total_bottom">
+          <span>
+            基础金额：1000 累计收入金额: 2000 累计支出金额: 2000 累计金额: 1000
+          </span>
+        </div>
       </el-col>
       <el-col :span="14" :xs="24">
         <el-form :inline="true" :model="recordSearchForm" ref="recordSearchForm" size="small">
@@ -224,7 +229,6 @@
             style="width:100%"
             height="400"
             border
-            show-summary
             stripe
         >
           <el-table-column
@@ -322,7 +326,7 @@ export default {
       familyTable: [],
       familyUserFormVisible: false,
       familyUserVisible: false,
-      currentRow: '',
+      currentRow: {},
       pickerOptions: {
         shortcuts: [{
           text: '最近一周',
@@ -355,6 +359,7 @@ export default {
   created() {
     this.queryFamily()
     this.getRecordCategoryList()
+    this.showMessage()
   },
   methods: {
     handleClose(done) {
@@ -473,7 +478,7 @@ export default {
     },
     // 提交申请
     joinFamily() {
-      if (!this.currentRow) {
+      if (!this.currentRow.tissueId) {
         this.$modal.alertWarning("未选择家庭，请重试")
       }
 
@@ -510,6 +515,10 @@ export default {
         this.categoryData = res.data.data
       })
     },
+    // 提示信息
+    showMessage(){
+      this.$modal.notify("悉知:成员交易记录仅展示加入家庭后的记录")
+    }
   }
 }
 </script>
@@ -517,5 +526,9 @@ export default {
 <style scoped>
 .item {
   margin: 4px;
+}
+.total_bottom{
+  position:fixed;
+  bottom:70px;
 }
 </style>

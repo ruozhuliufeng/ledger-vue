@@ -42,7 +42,7 @@ export function deleteFamily(id) {
 
 export function queryFamilyList(params) {
     return request({
-        url: '/tissue/family/query/list',
+        url: '`/tissue/family/query/list`',
         method: 'post',
         data: {
             ...params

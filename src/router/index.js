@@ -97,8 +97,7 @@ router.beforeEach((to, from, next) => {
                 Authorization: localStorage.getItem("token")
             }
         }).then(res => {
-            waitMsgNum = res.data.data > 99 ? '99+' : res.data.data
-            store.commit("SET_WAIT_MSG_NUM", waitMsgNum)
+            store.commit("SET_WAIT_MSG_NUM", res.data.data)
         })
     }
 
