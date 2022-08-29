@@ -158,10 +158,9 @@
 import {
   queryRole,
   queryRoleList,
+  updateRole,
+  saveRole,
   getMenuTree,
-  saveMenu,
-  updateMenu,
-  deleteMenu,
   grantRoleMenu,
   deleteRoleList
 } from "@/api/system";
