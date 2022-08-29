@@ -113,6 +113,7 @@
         <el-table
             :data="familyUserTable"
             style="width: 100%"
+            height="200"
             stripe
             border
             size="medium"
@@ -120,7 +121,7 @@
           <el-table-column
               prop="realName"
               label="姓名"
-              width="120"/>
+              width="70"/>
           <el-table-column
               prop="phone"
               label="手机号"
@@ -128,8 +129,18 @@
           <el-table-column
               prop="nickName"
               label="昵称"
-              width="120"/>
+              width="90"/>
           <el-table-column
+              prop="joinTime"
+              label="加入时间"
+              type="date"
+              width="100">
+            <template v-slot="scope">
+              {{ formatterTime(scope.row.joinTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+              fixed="right"
               label="操作">
             <template v-slot="scope">
               <el-button type="primary" size="mini" @click="editFamilyUser(scope.row)">编辑</el-button>
@@ -139,6 +150,8 @@
           </el-table-column>
         </el-table>
         <!-- TODO 循环展示设定目标 -->
+
+        <!-- TODO 底部展示家庭累计收入与支出，累计金额等信息 -->
       </el-col>
       <el-col :span="14" :xs="24">
         <el-form :inline="true" :model="recordSearchForm" ref="recordSearchForm" size="small">

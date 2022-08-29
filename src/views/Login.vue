@@ -39,7 +39,7 @@ export default {
   name: "Login",
   data() {
     return {
-      wechatUrl: '',
+      wechatUrl: 'http://media.aixuxi.cn/gongzhong.jpg',
       loginForm: {
         username: '',
         password: '',

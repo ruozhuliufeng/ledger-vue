@@ -5,7 +5,7 @@
         v-for="(item,index) in noReadMessage" :key="index"
     >
       <div slot="header" style="height: 10px">
-        <span style="font-size: 15px">{{ item.title }}</span>
+        <span style="font-size: 15px">{{ item.messageTitle }}</span>
         <el-button style="float: right; padding: 5px;margin-right: 10px"
                    type="success" icon="el-icon-check"
                    @click="confirmMessage(item.id)"
@@ -23,7 +23,7 @@
           <span>发送人：{{ item.sendUserName }}</span>
         </div>
         <div>
-          <span>发送时间：{{ item.sendTime }}</span>
+          <span>发送时间：{{ formatterTime(item.sendTime) }}</span>
         </div>
         <div>
           <span>内容：{{ item.messageContent }}</span>
@@ -38,37 +38,38 @@ import {queryNoReadMessage, confirmMessage, readMessage} from "@/api/message";
 
 export default {
   name: "UnReadMessage",
-  props: {
-    noReadMessage: {
-      type: Array,
+  data(){
+    return{
+      noReadMessage:[]
     }
   },
-  data() {
-    return {}
-  },
-  created() {
-    console.log("未读数据列表：" + this.noReadMessage)
+  mounted(){
+    this.getNoMessageList()
   },
   methods: {
+    // 获取未读消息列表
+    getNoMessageList(){
+      queryNoReadMessage().then(res=>{
+        this.noReadMessage = res.data.data
+      })
+    },
     // 确认消息
     confirmMessage(id) {
       confirmMessage(id).then(res => {
         this.$modal.msgSuccess("已确认")
-        queryNoReadMessage().then(res => {
-          // this.noReadMessage = {...res.data.data.data}
-          this.noReadMessage = res.data.data.data
-        })
+        this.getNoMessageList()
       })
     },
     // 已读消息
     readMessage(id) {
       readMessage(id).then(res => {
         this.$modal.msgSuccess("已读消息")
-        queryNoReadMessage().then(res => {
-          // this.noReadMessage = {...res.data.data.data}
-          this.noReadMessage = res.data.data.data
-        })
+        this.getNoMessageList()
       })
+    },
+    // 时间格式化
+    formatterTime(value){
+      return this.$moment(value).format('YYYY-MM-DD HH:mm:ss');
     }
   }
 }

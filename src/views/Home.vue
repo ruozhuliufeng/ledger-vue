@@ -46,11 +46,11 @@
           <el-tabs v-model="activeTab" style="margin-left: 5px">
             <el-tab-pane name="unReadMessage">
               <span slot="label"><i class="el-icon-bell"></i> 未读消息</span>
-              <un-read-message :noReadMessage="noReadMessage"/>
+              <un-read-message></un-read-message>
             </el-tab-pane>
             <el-tab-pane name="readMessage">
               <span slot="label"><i class="el-icon-message-solid"></i> 已读消息</span>
-              <read-message :readMessageList="readMessageList"/>
+              <read-message ></read-message>
             </el-tab-pane>
           </el-tabs>
         </el-drawer>
@@ -96,8 +96,6 @@ export default {
   },
   created() {
     this.getUserInfo()
-    this.getNoMessageList()
-    this.getMessageList()
   },
   computed:{
     waitMsgNum: {
@@ -123,19 +121,11 @@ export default {
     toMessage() {
       this.showMessage = true
     },
-    // 获取已读消息列表
-    getMessageList(){
-      queryReadMessage().then(res=>{
-        this.readMessageList = res.data.data.data
-      })
-    },
-    // 获取未读消息列表
-    getNoMessageList(){
-      queryNoReadMessage().then(res=>{
-        // this.noReadMessage = {...res.data.data.data}
-        this.noReadMessage = res.data.data.data
-      })
-    },
+
+    handleUpdateComponent(value){
+      console.log("接受到子组件消息："+value)
+      this.$forceUpdate()
+    }
   }
 }
 </script>
