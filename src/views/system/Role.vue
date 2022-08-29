@@ -12,7 +12,8 @@
             size="mini"
             plain
             icon="el-icon-search"
-            @click="getRoleList">搜索</el-button>
+            @click="getRoleList">搜索
+        </el-button>
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8">
@@ -70,7 +71,7 @@
           type="date"
           label="创建时间">
         <template v-slot="scope">
-          {{formatterTime(scope.row.createTime)}}
+          {{ formatterTime(scope.row.createTime) }}
         </template>
       </el-table-column>
       <el-table-column
@@ -165,6 +166,7 @@ import {
   deleteRoleList
 } from "@/api/system";
 import moment from "moment";
+
 export default {
   name: "Role",
   data() {
@@ -191,7 +193,7 @@ export default {
         children: 'children',
         label: 'name'
       },
-      menuForm:{},
+      menuForm: {},
       menuTreeData: [],
     }
   },
@@ -215,11 +217,11 @@ export default {
     },
     handleSizeChange(val) {
       this.size = val
-      this.getUserList()
+      this.getRoleList()
     },
     handleCurrentChange(val) {
       this.current = val
-      this.getUserList()
+      this.getRoleList()
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
@@ -228,6 +230,7 @@ export default {
     },
     handleClose() {
       this.resetForm('editForm')
+      this.getRoleList()
     },
     getRoleList() {
       var params = {
@@ -279,11 +282,11 @@ export default {
             }
           }
       )
+      this.getRoleList()
     },
     editHandle(id) {
       queryRole(id).then(res => {
         this.editForm = res.data.data
-
         this.dialogVisible = true
       })
     },
@@ -312,12 +315,14 @@ export default {
       queryRole(id).then(res => {
         this.roleForm = res.data.data
         this.$refs.menuForm.setCheckedKeys(res.data.data.menuIds)
-
       })
     },
     submitMenuHandle(formName) {
-      var menuIds = this.$refs.menuForm.getCheckedKeys()
-      grantRoleMenu(this.roleForm.id, menuIds).then(res => {
+      const selectIds = this.$refs.menuForm.getCheckedKeys();
+      const params = {
+        menuIds: selectIds
+      }
+      grantRoleMenu(this.roleForm.id, params).then(res => {
         this.$message({
           showClose: true,
           message: res.data.message,
@@ -328,9 +333,10 @@ export default {
         })
         this.menuDialogFormVisible = false
         this.resetForm(formName)
+        this.getRoleList()
       })
     },
-    formatterTime(value){
+    formatterTime(value) {
       return moment(value).format('YYYY-MM-DD');
     }
   }

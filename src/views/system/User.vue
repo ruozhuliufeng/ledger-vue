@@ -304,11 +304,11 @@ export default {
             }
           }
       )
+      this.getUserList()
     },
     editHandle(id) {
       queryUser(id).then(res => {
         this.editForm = res.data.data
-
         this.dialogVisible = true
       })
     },
@@ -340,14 +340,15 @@ export default {
         this.data.data.roles.forEach(row => {
           roleIds.push(row.id)
         })
-
         this.$refs.roleTree.setCheckedKeys(roleIds)
-
       })
     },
     submitRoleHandle(formName) {
-      var roleIds = this.$refs.roleTree.getCheckedKeys()
-      grantUserRole(this.roleForm.id, roleIds).then(res => {
+      const selectIds = this.$refs.roleTree.getCheckedKeys()
+      const params = {
+        roleIds: selectIds
+      };
+      grantUserRole(this.roleForm.id, params).then(res => {
         this.$message({
           showClose: true,
           message: res.data.message,
@@ -358,6 +359,7 @@ export default {
         })
         this.roleDialogFormVisible = false
       })
+      this.getUserList()
     },
     repassHandle(id, account) {
       this.$confirm('将重置用户【' + account + '】的密码，是否继续？', '提示', {
@@ -376,6 +378,7 @@ export default {
           })
         })
       })
+      this.getUserList()
     },
     formatterTime(value){
       return moment(value).format('YYYY-MM-DD');

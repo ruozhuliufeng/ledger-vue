@@ -224,6 +224,7 @@ export default {
             }
           }
       )
+      this.getMenuTree()
     },
     editHandle(id) {
       queryMenuInfo(id).then(res => {
@@ -240,6 +241,7 @@ export default {
     ,
     handleClos() {
       this.resetForm('editForm')
+      this.getMenuTree()
     }
     ,
     delHandle(id) {
