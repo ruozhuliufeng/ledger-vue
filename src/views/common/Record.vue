@@ -166,7 +166,7 @@
             <el-radio :label=2>其他</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="交易分类" prop="transactionCategory">
+        <el-form-item label="交易分类" prop="transactionCategory"  label-width="100px">
           <el-select
               v-model="editForm.transactionCategory"
               filterable

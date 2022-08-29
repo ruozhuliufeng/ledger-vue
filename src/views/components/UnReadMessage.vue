@@ -58,6 +58,7 @@ export default {
       confirmMessage(id).then(res => {
         this.$modal.msgSuccess("已确认")
         this.getNoMessageList()
+        this.$modal.msgWarning("请注意,部分信息可能未自动刷新,请手动刷新页面")
       })
     },
     // 已读消息
@@ -65,6 +66,7 @@ export default {
       readMessage(id).then(res => {
         this.$modal.msgSuccess("已读消息")
         this.getNoMessageList()
+        this.$modal.msgWarning("请注意,部分信息可能未自动刷新,请手动刷新页面")
       })
     },
     // 时间格式化
