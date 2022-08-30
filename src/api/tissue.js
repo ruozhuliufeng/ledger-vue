@@ -42,7 +42,7 @@ export function deleteFamily(id) {
 
 export function queryFamilyList(params) {
     return request({
-        url: '`/tissue/family/query/list`',
+        url: '/tissue/family/query/list',
         method: 'post',
         data: {
             ...params
@@ -74,5 +74,18 @@ export function queryFamilyRecord(params){
         data: {
             ...params
         }
+    })
+}
+export function applyJoinFamily(tissueId){
+    return request({
+        url: '/tissue/family/apply/join/'+tissueId,
+        method: 'get'
+    })
+}
+
+export function inviteJoinFamily(userId){
+    return request({
+        url: '/tissue/family/invite/join/'+userId,
+        method: 'get'
     })
 }

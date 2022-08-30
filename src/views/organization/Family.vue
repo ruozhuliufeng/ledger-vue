@@ -98,6 +98,38 @@
       </el-table>
       <el-button style="float: right; padding: 5px 0" type="success" @click="joinFamily">申请加入</el-button>
     </el-dialog>
+    <el-dialog
+        :visible.sync="familyUserVisible"
+        title="邀请人员加入"
+        width="30%"
+        :before-close="handleCloseInvite"
+    >
+      <el-form ref="searchForm" :inline="true" size="mini" :model="searchForm">
+        <el-form-item label="手机号" prop="phone" label-width="60px">
+          <el-input v-model="searchForm.phone" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" size="mini" @click="queryUserPhone">搜索</el-button>
+        </el-form-item>
+      </el-form>
+      <el-descriptions class="margin-top" title="人员信息" :column="1" border>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-user"></i>
+            用户名
+          </template>
+          {{ inviteFamilyUser.nickName }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-mobile-phone"></i>
+            手机号
+          </template>
+          {{ inviteFamilyUser.phone }}
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-button style="float: right; padding: 5px 0" type="success" @click="inviteFamily">邀请加入</el-button>
+    </el-dialog>
     <el-row :gutter="20">
       <el-col :span="10" :xs="24">
         归属家庭：<span style="color: #3a8ee6">{{ editForm.tissueName }}</span>
@@ -198,9 +230,9 @@
                 collapse-tags
                 default-first-option
                 placeholder="请输选择交易类型">
-                <el-option label="收入" value=0></el-option>
-                <el-option label="支出" value=1></el-option>
-                <el-option label="其他" value=2></el-option>
+              <el-option label="收入" value=0></el-option>
+              <el-option label="支出" value=1></el-option>
+              <el-option label="其他" value=2></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="交易时间" prop="selectDate">
@@ -290,10 +322,13 @@ import {
   deleteFamilyUser,
   queryFamilyList,
   queryFamilyUser,
-  queryFamilyRecord
+  queryFamilyRecord,
+  applyJoinFamily,
+  inviteJoinFamily
 } from "@/api/tissue";
 import moment from "moment";
-import {queryRecordCategoryList} from "../../api/record";
+import {queryRecordCategoryList} from "@/api/record";
+import {queryUserPhone} from "@/api/system";
 
 export default {
   name: "Family",
@@ -320,8 +355,9 @@ export default {
       searchForm: {},
       recordSearchForm: {},
       familyRecordTable: [],
-      categoryData:[],
+      categoryData: [],
       familyUserTable: [],
+      inviteFamilyUser: {},
       familyUserForm: {},
       familyTable: [],
       familyUserFormVisible: false,
@@ -377,6 +413,11 @@ export default {
     handleCloseJoin() {
       this.joinFamilyVisible = false
       this.infoDialogVisible = true
+      this.resetForm('searchForm')
+    },
+    handleCloseInvite() {
+      this.familyUserVisible = false
+      this.inviteFamilyUser = {}
       this.resetForm('searchForm')
     },
     handleJoinFamily() {
@@ -478,18 +519,22 @@ export default {
     },
     // 提交申请
     joinFamily() {
-      if (!this.currentRow.tissueId) {
+      if (!this.currentRow.id) {
         this.$modal.alertWarning("未选择家庭，请重试")
+      } else {
+        applyJoinFamily(this.currentRow.id).then(res => {
+          this.$modal.msgSuccess(res.data.message)
+        })
       }
-
     },
     // 新增家庭成员
     addFamilyUser() {
       this.familyUserVisible = true
+      this.$modal.notifyWarning("注意:请核实人员昵称与手机号码是否一致后再邀请")
     },
     // 家庭收支记录
     queryFamilyRecordList() {
-      if (this.recordSearchForm.selectDate){
+      if (this.recordSearchForm.selectDate) {
         this.recordSearchForm.transactionStartTime = this.recordSearchForm.selectDate[0]
         this.recordSearchForm.transactionEndTime = this.recordSearchForm.selectDate[1]
       }
@@ -515,8 +560,27 @@ export default {
         this.categoryData = res.data.data
       })
     },
+    // 根据手机号查询人员
+    queryUserPhone() {
+      const queryParams = {
+        phone: this.searchForm.phone
+      }
+      queryUserPhone(queryParams).then(res => {
+        this.inviteFamilyUser = res.data.data
+      })
+    },
+    // 邀请人员
+    inviteFamily() {
+      if (!this.inviteFamilyUser.id) {
+        this.$modal.msgError("请先查询人员信息")
+      } else {
+        inviteJoinFamily(this.inviteFamilyUser.id).then(res => {
+          this.$modal.msgSuccess(res.data.message)
+        })
+      }
+    },
     // 提示信息
-    showMessage(){
+    showMessage() {
       this.$modal.notify("悉知:成员交易记录仅展示加入家庭后的记录")
     }
   }
@@ -527,8 +591,9 @@ export default {
 .item {
   margin: 4px;
 }
-.total_bottom{
-  position:fixed;
-  bottom:70px;
+
+.total_bottom {
+  position: fixed;
+  bottom: 70px;
 }
 </style>
