@@ -89,3 +89,10 @@ export function inviteJoinFamily(userId){
         method: 'get'
     })
 }
+
+export function queryFamilyTotal(tissueId){
+    return request({
+        url: '/tissue/family/query/total/'+userId,
+        method: 'get'
+    })
+}

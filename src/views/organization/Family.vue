@@ -32,6 +32,9 @@
         <el-form-item label="家庭描述" prop="tissueDescription" label-width="100px">
           <el-input v-model="editForm.tissueDescription" autocomplete="off"/>
         </el-form-item>
+        <el-form-item label="基础金额" prop="initialAmount" label-width="100px">
+          <el-input v-model="editForm.initialAmount" autocomplete="off"/>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm('editForm')">确定</el-button>
@@ -40,7 +43,7 @@
     </el-dialog>
     <el-dialog
         :visible.sync="familyUserFormVisible"
-        title="编辑家庭成员昵称"
+        title="编辑家庭成员信息"
         width="30%"
     >
       <el-form :model="familyUserForm" ref="familyUserForm">
@@ -52,6 +55,14 @@
         </el-form-item>
         <el-form-item label="昵    称" prop="nickName" label-width="100px">
           <el-input v-model="familyUserForm.nickName" autocomplete="off"/>
+        </el-form-item>
+        <!-- TODO 设置权限，仅有权限的人员可设置加入时间，暂时开放 -->
+        <el-form-item label="加入时间" prop="joinTime" label-width="100px">
+          <el-date-picker
+              v-model="familyUserForm.joinTime"
+              type="datetime"
+              placeholder="成员加入时间">
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -183,12 +194,21 @@
         </el-table>
         <!-- TODO 循环展示设定目标 -->
 
-        <!-- TODO 底部展示家庭累计收入与支出，累计金额等信息 -->
-        <div class="total_bottom">
-          <span>
-            基础金额：1000 累计收入金额: 2000 累计支出金额: 2000 累计金额: 1000
-          </span>
-        </div>
+        <!-- 底部展示家庭累计收入与支出，累计金额等信息 -->
+        <el-descriptions class="total_bottom" :column="4" border size="small">
+          <el-descriptions-item label="基础金额" :labelStyle="{'background':'#E1F3D8'}"
+                                :contentStyle="{'background':'#FDE2E2'}">{{ this.editForm.initialAmount }}
+          </el-descriptions-item>
+          <el-descriptions-item label="累计收入金额" :labelStyle="{'background':'#E1F3D8'}"
+                                :contentStyle="{'background':'#FDE2E2'}">{{ familyTotalPrice.totalIncomePrice }}
+          </el-descriptions-item>
+          <el-descriptions-item label="累计支出金额" :labelStyle="{'background':'#E1F3D8'}"
+                                :contentStyle="{'background':'#FDE2E2'}">{{ familyTotalPrice.totalExpendPrice }}
+          </el-descriptions-item>
+          <el-descriptions-item label="累计金额" :labelStyle="{'background':'#E1F3D8'}"
+                                :contentStyle="{'background':'#FDE2E2'}">{{ familyTotalPrice.totalPrice }}
+          </el-descriptions-item>
+        </el-descriptions>
       </el-col>
       <el-col :span="14" :xs="24">
         <el-form :inline="true" :model="recordSearchForm" ref="recordSearchForm" size="small">
@@ -324,7 +344,8 @@ import {
   queryFamilyUser,
   queryFamilyRecord,
   applyJoinFamily,
-  inviteJoinFamily
+  inviteJoinFamily,
+  queryFamilyTotal
 } from "@/api/tissue";
 import moment from "moment";
 import {queryRecordCategoryList} from "@/api/record";
@@ -346,6 +367,7 @@ export default {
         tissueName: '',
         tissueDescription: '',
         tissueCode: '',
+        initialAmount: '',
       },
       editFormRules: {
         tissueName: [
@@ -363,6 +385,7 @@ export default {
       familyUserFormVisible: false,
       familyUserVisible: false,
       currentRow: {},
+      familyTotalPrice:{},
       pickerOptions: {
         shortcuts: [{
           text: '最近一周',
@@ -451,6 +474,9 @@ export default {
             this.familyUserTable = res.data.data
           })
           this.queryFamilyRecordList()
+          queryFamilyTotal(this.editForm.id).then(res=>{
+            this.familyTotalPrice = res.data.data
+          })
         }
       })
     },
@@ -595,5 +621,13 @@ export default {
 .total_bottom {
   position: fixed;
   bottom: 70px;
+}
+
+.my-label {
+  background: #E1F3D8;
+}
+
+.my-content {
+  background: #FDE2E2;
 }
 </style>

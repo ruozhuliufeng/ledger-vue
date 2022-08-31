@@ -15,6 +15,9 @@
     <el-form-item label="电子邮箱" prop="email">
       <el-input v-model="user.email" maxlength="30" />
     </el-form-item>
+    <el-form-item label="初始金额" prop="initialAmount">
+      <el-input v-model="user.initialAmount" maxlength="30" />
+    </el-form-item>
     <el-form-item label="性别">
       <el-radio-group v-model="user.sex">
         <el-radio label="0">男</el-radio>
