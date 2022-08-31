@@ -45,3 +45,16 @@ export function queryReport(){
         method: 'get'
     })
 }
+
+export function queryUserTotal(){
+    return request({
+        url: '/base/query/total',
+        method: 'get'
+    })
+}
+export function queryTradeReport(){
+    return request({
+        url: '/base/query/trade/report',
+        method: 'get'
+    })
+}

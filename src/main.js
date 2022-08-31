@@ -14,7 +14,8 @@ import moment from "moment";
 // import '@/assets/styles/element-variables.scss'
 // import '@/assets/styles/index.scss'
 import '@/assets/icons'
-
+// 引入图表
+import VCharts from 'v-charts-v2'
 // 全局组件挂载
 Vue.component("RightToolBar",RightToolBar)
 
@@ -22,6 +23,7 @@ Vue.component("RightToolBar",RightToolBar)
 Vue.use(dataV)
 Vue.use(Element)
 Vue.prototype.$axios = request
+Vue.use(VCharts)
 // 模态框对象
 Vue.prototype.$modal = modal
 // 时间格式化

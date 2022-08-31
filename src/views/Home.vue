@@ -9,7 +9,7 @@
         <div class="header-avatar">
           <el-avatar size="medium" :src="userInfo.avatar"></el-avatar>
           <el-dropdown>
-            <span class="el-dropdown-link">{{ userInfo.account }}<i class="el-icon-arrow-down el-icon--right">
+            <span class="el-dropdown-link">{{ userInfo.nickName }}<i class="el-icon-arrow-down el-icon--right">
 
             </i> </span>
             <el-dropdown-menu slot="dropdown">

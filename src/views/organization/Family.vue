@@ -32,7 +32,7 @@
         <el-form-item label="家庭描述" prop="tissueDescription" label-width="100px">
           <el-input v-model="editForm.tissueDescription" autocomplete="off"/>
         </el-form-item>
-        <el-form-item label="基础金额" prop="initialAmount" label-width="100px">
+        <el-form-item label="初始金额" prop="initialAmount" label-width="100px">
           <el-input v-model="editForm.initialAmount" autocomplete="off"/>
         </el-form-item>
       </el-form>
@@ -195,8 +195,8 @@
         <!-- TODO 循环展示设定目标 -->
 
         <!-- 底部展示家庭累计收入与支出，累计金额等信息 -->
-        <el-descriptions class="total_bottom" :column="4" border size="small">
-          <el-descriptions-item label="基础金额" :labelStyle="{'background':'#E1F3D8'}"
+        <el-descriptions class="total_bottom" :column="2" border size="small">
+          <el-descriptions-item label="初始金额" :labelStyle="{'background':'#E1F3D8'}"
                                 :contentStyle="{'background':'#FDE2E2'}">{{ this.editForm.initialAmount }}
           </el-descriptions-item>
           <el-descriptions-item label="累计收入金额" :labelStyle="{'background':'#E1F3D8'}"
@@ -474,10 +474,14 @@ export default {
             this.familyUserTable = res.data.data
           })
           this.queryFamilyRecordList()
-          queryFamilyTotal(this.editForm.id).then(res=>{
-            this.familyTotalPrice = res.data.data
-          })
+          this.queryFamilyTotalAmount()
         }
+      })
+    },
+    // 查询家庭汇总数据
+    queryFamilyTotalAmount(){
+      queryFamilyTotal(this.editForm.id).then(res=>{
+        this.familyTotalPrice = res.data.data
       })
     },
     // 解散家庭
@@ -486,6 +490,7 @@ export default {
         this.$modal.msgSuccess(res.data.data.message)
         this.queryFamily();
       })
+      this.queryFamilyTotalAmount()
     },
     // 家庭创建/更新
     submitForm(formName) {
@@ -531,6 +536,7 @@ export default {
         queryFamilyUser(this.familyUserForm.tissueId).then(res => {
           this.familyUserTable = res.data.data
         })
+        this.queryFamilyTotalAmount()
       })
     },
     // 家庭列表选取
@@ -564,7 +570,7 @@ export default {
         this.recordSearchForm.transactionStartTime = this.recordSearchForm.selectDate[0]
         this.recordSearchForm.transactionEndTime = this.recordSearchForm.selectDate[1]
       }
-      var queryParams = {
+      const queryParams = {
         ...this.recordSearchForm,
         tissueId: this.editForm.id,
         current: this.current,
