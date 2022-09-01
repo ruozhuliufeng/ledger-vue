@@ -47,7 +47,7 @@
                    plain
                    icon="el-icon-delete"
                    size="mini"
-                   @click="delHandle">
+                   @click="delHandle(null)">
           批量删除
         </el-button>
       </el-col>
@@ -74,21 +74,27 @@
       </el-table-column>
       <el-table-column
           prop="transactionSn"
+          width="200"
           label="交易单号"/>
       <el-table-column
           prop="merchantOrderSn"
+          width="200"
           label="商品单号"/>
       <el-table-column
           prop="transactionCategory"
+          width="100px"
           label="交易分类"/>
       <el-table-column
           prop="counterpartyName"
+          width="100px"
           label="交易对方"/>
       <el-table-column
           prop="counterpartyAccount"
+          width="120px"
           label="交易对方账户"/>
       <el-table-column
           prop="productName"
+          width="200px"
           label="商品名称"/>
       <el-table-column
           prop="transactionType"
@@ -101,27 +107,31 @@
       </el-table-column>
       <el-table-column
           prop="paymentMethod"
+          width="100px"
           label="支付方式"/>
       <el-table-column
           prop="amount"
+          width="100px"
           label="交易金额"/>
       <el-table-column
           prop="currentStatus"
+          width="100px"
           label="当前状态"/>
       <el-table-column
           prop="remark"
+          width="150px"
           label="交易描述"/>
       <el-table-column
           prop="createTime"
           type="date"
-          label="创建时间">
+          label="创建时间" width="100px">
         <template v-slot="scope">
           {{ formatterTime(scope.row.createTime) }}
         </template>
       </el-table-column>
       <el-table-column
           prop="icon"
-          width="250px"
+          width="100px"
           label="操作">
         <template v-slot="scope">
           <el-button type="text" @click="editHandle(scope.row.id)">编辑</el-button>
@@ -228,7 +238,7 @@
         <div class="el-upload__tip text-center" slot="tip">
           <div class="el-upload__tip" slot="tip">
             压缩包解压密码:
-            <el-input v-model="uploadForm.password" autocomplete="off"/>
+            <el-input type="password" maxlength="6" v-model="uploadForm.password" autocomplete="off"/>
           </div>
           <span>只能上传csv/zip文件，上传压缩文件请输入解压密码</span>
         </div>
@@ -324,6 +334,7 @@ export default {
       this.editForm = {}
     },
     handleClose() {
+      this.uploadFormVisible = false
       this.resetForm('editForm')
       this.resetForm('uploadForm')
     },
@@ -348,7 +359,7 @@ export default {
       })
     },
     getRecordList() {
-      var params = {
+      const params = {
         name: this.searchForm.name,
         current: this.current,
         size: this.size
@@ -405,16 +416,14 @@ export default {
       if (id) {
         this.ids.push(id)
       }
-      deleteRecordList(this.ids).then(res => {
-        this.$message({
-          showClose: true,
-          message: res.data.message,
-          type: 'success',
-          onclose: () => {
-            this.getRoleList()
-          }
-        })
+      const params = {
+        recordIds: this.ids
+      }
+      console.log("params:"+params)
+      deleteRecordList(params).then(res => {
+        this.$modal.msgSuccess(res.data.message)
       })
+      this.getRecordList()
     },
     formatterTime(value) {
       return moment(value).format('YYYY-MM-DD');

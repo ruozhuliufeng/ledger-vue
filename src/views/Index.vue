@@ -45,15 +45,15 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <dv-border-box-8>
-          <dv-charts :option="incomeRatio"  style="width:100%;height:300px"/>
+          <dv-charts :option="incomeRatio" style="width:100%;height:300px"/>
         </dv-border-box-8>
       </el-col>
       <el-col :span="12">
         <dv-border-box-8>
-          <dv-charts :option="expenseRatio"  style="width:100%;height:300px"/>
+          <dv-charts :option="expenseRatio" style="width:100%;height:300px"/>
         </dv-border-box-8>
       </el-col>
-    </el-row >
+    </el-row>
     <el-row :gutter="20">
       <el-col :span="12">
         <dv-border-box-5>
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import {queryUserTotal,queryReport,queryTradeReport} from "@/api/common";
+import {queryUserTotal, queryReport, queryTradeReport} from "@/api/common";
 
 export default {
   name: "Index",
@@ -93,8 +93,9 @@ export default {
             }
           }
         ]
-      }
-      ,expenseRatio: { title: {
+      },
+      expenseRatio: {
+        title: {
           text: '累计记录支出占比'
         },
         series: [
@@ -111,7 +112,7 @@ export default {
         unit: '元',
         data: []
       },
-      trend:{
+      trend: {
         xAxis: {
           name: '年月',
           data: []
@@ -139,13 +140,13 @@ export default {
     this.queryTradeReportList()
   },
   methods: {
-    queryUserTotalAmount(){
-      queryUserTotal().then(res=>{
+    queryUserTotalAmount() {
+      queryUserTotal().then(res => {
         this.userTotalAmout = res.data.data
       })
     },
-    queryUserReport(){
-      queryReport().then(res=>{
+    queryUserReport() {
+      queryReport().then(res => {
         this.incomeRatio.series[0].data = res.data.data.incomeRatioList
         this.incomeRatio = {...this.incomeRatio}
         this.expenseRatio.series[0].data = res.data.data.expenseRatioList
@@ -154,8 +155,8 @@ export default {
         this.recentTrade = {...this.recentTrade}
       })
     },
-    queryTradeReportList(){
-      queryTradeReport().then(res=>{
+    queryTradeReportList() {
+      queryTradeReport().then(res => {
         const tradeReportList = res.data.data
         const xAxisData = []
         const seriesData = []
@@ -163,6 +164,7 @@ export default {
           xAxisData.push(item.name)
           seriesData.push(item.value)
         }
+        // TODO 折线图待处理
         this.trend.xAxis.data = xAxisData
         this.trend.series[0].data = seriesData
         this.trend = {...this.trend}
@@ -185,9 +187,11 @@ export default {
   font-size: 14px;
   color: darkgray;
 }
-.mgb20{
+
+.mgb20 {
   height: 50%;
 }
+
 .grid-num {
   font-size: 30px;
   font-weight: bold;
