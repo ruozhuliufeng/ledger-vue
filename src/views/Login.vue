@@ -26,6 +26,7 @@
         <el-form-item>
           <el-button type="primary" @click="submitForm('loginForm')">登录</el-button>
           <el-button @click="resetForm('loginForm')">重置</el-button>
+          <el-button type="warning" icon="el-icon-warning-outline" circle @click="helpInfo"/>
         </el-form-item>
       </el-form>
     </el-col>
@@ -35,6 +36,7 @@
 <script>
 import {common, getCaptcha} from "@/api/common";
 import qs from 'qs'
+
 export default {
   name: "Login",
   data() {
@@ -58,24 +60,24 @@ export default {
           {min: 5, max: 5, message: "长度为5个字符", trigger: 'blur'}
         ]
       },
-      captchaImg:null
+      captchaImg: null
     }
   },
   methods: {
-    submitForm(formName){
-      this.$refs[formName].validate((valid)=>{
-        if (valid){
-          common(qs.stringify(this.loginForm)).then(res=>{
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          common(qs.stringify(this.loginForm)).then(res => {
             const jwt = res.headers['authorization']
-            this.$store.commit('SET_TOKEN',jwt)
+            this.$store.commit('SET_TOKEN', jwt)
             this.$router.push("/index")
           })
-        }else {
+        } else {
           return false
         }
       })
     },
-    resetForm(formName){
+    resetForm(formName) {
       this.$refs[formName].resetFields()
     },
     getCaptcha() {
@@ -84,6 +86,9 @@ export default {
         this.loginForm.code = ''
         this.captchaImg = res.data.data.captchaImg
       })
+    },
+    helpInfo() {
+      this.$modal.notifyWarning("请注意:本系统尚未接入MSOP,且不提供账号注册功能;建议通过源码构建网站,源码地址可通过公众号获取.如有疑问,可通过公众号联系.")
     }
   },
   created() {
