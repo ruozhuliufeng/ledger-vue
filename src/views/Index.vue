@@ -124,10 +124,9 @@ export default {
         series: [
           {
             data: [],
-            type: 'line',
-            label: {
-              show: true,
-              formatter: '{value} 元'
+            type: 'bar',
+            gradient: {
+              color: ['#37a2da', '#67e0e3']
             }
           }
         ]
@@ -158,15 +157,15 @@ export default {
     queryTradeReportList() {
       queryTradeReport().then(res => {
         const tradeReportList = res.data.data
-        const xAxisData = []
-        const seriesData = []
+        // const xAxisData = []
+        // const seriesData = []
         for (let item of tradeReportList){
-          xAxisData.push(item.name)
-          seriesData.push(item.value)
+          this.trend.xAxis.data.push(item.name)
+          this.trend.series[0].data.push(item.value)
         }
         // TODO 折线图待处理
-        this.trend.xAxis.data = xAxisData
-        this.trend.series[0].data = seriesData
+        // this.trend.xAxis.data = xAxisData
+        // this.trend.series[0].data = seriesData
         this.trend = {...this.trend}
       })
     }

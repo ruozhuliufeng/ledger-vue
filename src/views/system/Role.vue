@@ -110,14 +110,14 @@
         :before-close="handleClose">
       <el-form ref="editForm" :model="editForm" :rules="editFormRules">
         <el-form-item label="角色名称" prop="roleName" label-width="100px">
-          <el-input v-model="editForm.name" autocomplete="off"/>
+          <el-input v-model="editForm.roleName" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="唯一编码" prop="roleCode" label-width="100px">
           <el-input v-model="editForm.roleCode" autocomplete="off"/>
         </el-form-item>
-        <el-form-item label="备注" prop="remark" label-width="100px">
-          <el-input v-model="editForm.remark" autocomplete="off"/>
-        </el-form-item>
+<!--        <el-form-item label="备注" prop="remark" label-width="100px">-->
+<!--          <el-input v-model="editForm.remark" autocomplete="off"/>-->
+<!--        </el-form-item>-->
         <el-form-item label="状态" prop="isDeleted" label-width="100px">
           <el-radio-group v-model="editForm.isDeleted">
             <el-radio :label=0>正常</el-radio>
@@ -259,7 +259,6 @@ export default {
                     message: res.data.message,
                     type: 'success',
                     onclose: () => {
-                      this.getMenuTree()
                     }
                   })
                 })
@@ -270,17 +269,16 @@ export default {
                     message: res.data.message,
                     type: 'success',
                     onclose: () => {
-                      this.getMenuTree()
                     }
                   })
                 })
-                this.dialogVisible = false
               }
             } else {
               return false
             }
           }
       )
+      this.dialogVisible = false
       this.getRoleList()
     },
     editHandle(id) {

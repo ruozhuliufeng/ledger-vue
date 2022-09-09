@@ -4,7 +4,18 @@
 
 <script>
 export default {
-  name: "Fund"
+  name: "Fund",
+  data(){
+    return{
+
+    }
+  },
+  created(){
+    this.$modal.msgWarning("基金功能开发中")
+  },
+  methods:{
+
+  }
 }
 </script>
 

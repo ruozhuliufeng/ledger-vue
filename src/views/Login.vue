@@ -71,8 +71,11 @@ export default {
             const jwt = res.headers['authorization']
             this.$store.commit('SET_TOKEN', jwt)
             this.$router.push("/index")
+          }).catch(error=>{
+            this.getCaptcha()
           })
         } else {
+          this.getCaptcha()
           return false
         }
       })
