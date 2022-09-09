@@ -10,7 +10,6 @@
           <el-avatar size="medium" :src="userInfo.avatar"></el-avatar>
           <el-dropdown>
             <span class="el-dropdown-link">{{ userInfo.nickName }}<i class="el-icon-arrow-down el-icon--right">
-
             </i> </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
@@ -50,7 +49,7 @@
             </el-tab-pane>
             <el-tab-pane name="readMessage">
               <span slot="label"><i class="el-icon-message-solid"></i> 已读消息</span>
-              <read-message ></read-message>
+              <read-message></read-message>
             </el-tab-pane>
           </el-tabs>
         </el-drawer>
@@ -72,7 +71,8 @@ import Tabs from "@/views/components/Tabs";
 import {getUserInfo, logout} from "@/api/common";
 import UnReadMessage from "@/views/components/UnReadMessage";
 import ReadMessage from "@/views/components/ReadMessage";
-import {queryReadMessage,queryNoReadMessage} from "@/api/message";
+import {generateFromString} from 'generate-avatar'
+
 export default {
   name: 'Home',
   components: {
@@ -89,15 +89,15 @@ export default {
         avatar: ""
       },
       showMessage: false,
-      activeTab:'unReadMessage',
-      noReadMessage:[],
+      activeTab: 'unReadMessage',
+      noReadMessage: [],
       readMessageList: []
     }
   },
   created() {
     this.getUserInfo()
   },
-  computed:{
+  computed: {
     waitMsgNum: {
       get() {
         return this.$store.state.waitMsgNum
@@ -108,6 +108,7 @@ export default {
     getUserInfo() {
       getUserInfo().then(res => {
         this.userInfo = res.data.data
+        this.userInfo.avatar = "data:image/svg+xml;utf8,"+generateFromString(this.userInfo.account)
       })
     },
     logout() {
@@ -121,11 +122,6 @@ export default {
     toMessage() {
       this.showMessage = true
     },
-
-    handleUpdateComponent(value){
-      console.log("接受到子组件消息："+value)
-      this.$forceUpdate()
-    }
   }
 }
 </script>

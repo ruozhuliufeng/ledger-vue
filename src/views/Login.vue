@@ -56,7 +56,7 @@ export default {
           {required: true, message: '请输入密码', trigger: 'blur'}
         ],
         code: [
-          {required: true, message: '请输入密码', trigger: 'blur'},
+          {required: true, message: '请输入验证码', trigger: 'blur'},
           {min: 5, max: 5, message: "长度为5个字符", trigger: 'blur'}
         ]
       },
