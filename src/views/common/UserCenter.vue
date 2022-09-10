@@ -94,6 +94,7 @@ export default {
     getUserInfo() {
       getUserInfo().then(res => {
         this.userInfo = res.data.data
+        this.$store.commit("SET_USER_AVATAR",this.userInfo.avatar)
       })
     },
     formatterTime(value){

@@ -8,6 +8,7 @@ export default new Vuex.Store({
 	state: {
 		token: '',
 		waitMsgNum: 0,
+		userAvatar:'',
 	},
 	mutations: {
 		SET_TOKEN: (state, token) => {
@@ -16,7 +17,10 @@ export default new Vuex.Store({
 		},
 		SET_WAIT_MSG_NUM:(state,waitMsgNum)=>{
 			state.waitMsgNum = waitMsgNum
-		}
+		},
+		SET_USER_AVATAR:(state,userAvatar) =>{
+			state.userAvatar = userAvatar
+		},
 	},
 	actions: {},
 	modules: {

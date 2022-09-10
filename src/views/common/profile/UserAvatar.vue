@@ -27,7 +27,11 @@
       <br/>
       <el-row>
         <el-col :lg="2" :md="2">
-          <el-upload action="#" :http-request="requestUpload" :show-file-list="false" :before-upload="beforeUpload">
+          <el-upload
+              action="#"
+              :http-request="requestUpload"
+              :show-file-list="false"
+              :before-upload="beforeUpload">
             <el-button size="small">
               选择
               <i class="el-icon-upload el-icon--right"></i>
@@ -56,8 +60,7 @@
 
 <script>
 import {VueCropper} from "vue-cropper";
-import {uploadUserAvatar} from "@/api/system";
-// import { uploadAvatar } from "@/api/system/user";
+import {uploadUserAvatar,updateUser} from "@/api/system";
 
 export default {
   name: "UserAvatar",
@@ -76,7 +79,7 @@ export default {
       // 弹出层标题
       title: "修改头像",
       options: {
-        img: this.user.avatar, //裁剪图片的地址
+        img: this.$store.userAvatar, //裁剪图片的地址
         autoCrop: true, // 是否默认生成截图框
         autoCropWidth: 200, // 默认生成截图框宽度
         autoCropHeight: 200, // 默认生成截图框高度
@@ -96,6 +99,7 @@ export default {
     },
     // 覆盖默认的上传行为
     requestUpload() {
+
     },
     // 向左旋转
     rotateLeft() {
@@ -129,9 +133,12 @@ export default {
         formData.append("avatarFile", data);
         uploadUserAvatar(formData).then(res => {
           this.options.img = res.data.data
+          this.$store.commit("SET_USER_AVATAR",res.data.data)
           this.user.avatar = res.data.data
+          updateUser(this.user).then(res=>{
+            this.$modal.msgSuccess("修改成功");
+          })
           this.open = false;
-          this.$modal.msgSuccess("修改成功");
           this.visible = false;
         });
       });

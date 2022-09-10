@@ -7,7 +7,7 @@
       <el-header>
         <strong>Ledger 财务管理系统</strong>
         <div class="header-avatar">
-          <el-avatar size="medium" :src="userInfo.avatar"></el-avatar>
+          <el-avatar size="medium" :src="userAvatar"></el-avatar>
           <el-dropdown>
             <span class="el-dropdown-link">{{ userInfo.nickName }}<i class="el-icon-arrow-down el-icon--right">
             </i> </span>
@@ -102,13 +102,19 @@ export default {
       get() {
         return this.$store.state.waitMsgNum
       }
+    },
+    userAvatar:{
+      get(){
+        return this.$store.state.userAvatar
+      }
     }
   },
   methods: {
     getUserInfo() {
       getUserInfo().then(res => {
         this.userInfo = res.data.data
-        this.userInfo.avatar = "data:image/svg+xml;utf8,"+generateFromString(this.userInfo.account)
+        // 设置用户头像
+        this.$store.commit("SET_USER_AVATAR",this.userInfo.avatar)
       })
     },
     logout() {
